@@ -214,7 +214,6 @@ exports.sendOtp = async (req, res) => {
 
 // for login
 exports.Login = async (req, res) => {
-  console.log("LOGIN!!!!!!!!!");
   try {
     // fecth the data
     const { email, password, role } = req.body;
@@ -246,7 +245,7 @@ exports.Login = async (req, res) => {
     if (user.role !== role) {
       return res.status(401).json({
         success: false,
-        message: `No Account found corresponding to given email id ${email} with this role ${role}}`,
+        message: `No Account found corresponding to given email id ${email} with this role ${role} `,
       });
     }
 
