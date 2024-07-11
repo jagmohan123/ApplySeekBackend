@@ -87,7 +87,7 @@ exports.updateProfileData = async (req, res) => {
     const user = await User.findByIdAndUpdate(id);
 
     // save the updated date in user schema
-     user.save;
+    user.save;
 
     // update the additional profile
     // we allready create the object so instead of
@@ -122,34 +122,45 @@ exports.updateProfileData = async (req, res) => {
 
 // delete Account
 
+// delete user profile
 exports.deleteAccount = async (req, res) => {
-  // console.log("Delete Controller ");
+  console.log("Inside delete con");
   try {
-    // only login user can delete there account
-    const id = req.user.id;
-    // get the user info
-    const user = await User.findById(id);
-    // console.log("user Data is ==>", user);
-    if (!user) {
-      return res.status(403).json({
+    const userId = req.user.id;
+    if (!userId) {
+      return res.status(404).json({
         success: false,
-        message: "User Account not exist!!!!",
+        message: `Please Login before deleting your account`,
+      });
+    }
+    const user = await User.findById({ _id: userId });
+
+    // console.log(user);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: ` No user exist corresponsing to this user id ${userId}`,
       });
     }
 
-    // if user found so delete the additional details as well as user Db also
-    const deleteUser = await User.findOneAndDelete(id);
+    // Employer can't delete there profile
+    if (user?.role === "Employer") {
+      return res.status(500).json({
+        success: false,
+        message: "You are an Employer can't delete your Account",
+      });
+    }
 
-    // finally return response
-    res.status(200).json({
+    // if user found to we have to delete the user account from the db
+    await User.findByIdAndDelete(userId);
+    return res.status(200).json({
       success: true,
-      message: "User Account has been deleted successfully",
-      user: deleteUser,
+      message: "User Account has been deleted ",
     });
   } catch (error) {
-    return res.status(403).json({
+    res.status(500).json({
       success: false,
-      message: "Accound can't be deleted due to Internal server problem !!!",
+      message: "Getting error while deleting the user account ",
       error: error.message,
     });
   }
