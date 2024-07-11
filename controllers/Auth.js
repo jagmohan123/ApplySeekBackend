@@ -569,3 +569,47 @@ exports.getUserInfo = async (req, res) => {
     });
   }
 };
+
+// delete user profile
+exports.deleteAccount = async (req, res) => {
+  // console.log("Inside delete con");
+  try {
+    const userId = req.user.id;
+    if (!userId) {
+      return res.status(404).json({
+        success: false,
+        message: `Please Login before deleting your account`,
+      });
+    }
+    const user = await User.findById({ _id: userId });
+
+    // console.log(user);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: ` No user exist corresponsing to this user id ${userId}`,
+      });
+    }
+
+    // Employer can't delete there profile
+    if (user?.role === "Employer") {
+      return res.status(500).json({
+        success: false,
+        message: "You are an Employer can't delete your Account",
+      });
+    }
+
+    // if user found to we have to delete the user account from the db
+    await User.findByIdAndDelete(userId);
+    return res.status(200).json({
+      success: true,
+      message: "User Account has been deleted ",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Getting error while deleting the user account ",
+      error: error.message,
+    });
+  }
+};
