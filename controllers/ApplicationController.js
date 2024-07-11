@@ -1,25 +1,19 @@
+const { successFullyApply } = require("../mailTemplate/SuccessFullyApply");
 const Application = require("../models/Application");
 const Job = require("../models/Job");
+const mailSender = require("../utility/mailSender");
 const uploadDataCloudinary = require("../utility/uploadCloudinary");
 require("dotenv").config();
 // apply to the job that is post your application
 exports.postApplication = async (req, res) => {
   // console.log("Wr are in application controller!! ");
   try {
-    const {
-      firstName,
-      lastName,
-      email,
-      coverLetter,
-      contact,
-      address,
-      
-    } = req.body;
-    let jobID=req.params;
+    const { firstName, lastName, email, coverLetter, contact, address } =
+      req.body;
+    let jobID = req.params;
     // we got object id {id:"6676b7373f634ea44267d6ca"} like this but we wanna like this 6676b7373f634ea44267d6ca
-    //extract it and convert into a string 
-    let jobId=jobID.id;
-    
+    //extract it and convert into a string
+    let jobId = jobID.id;
 
     // console.log("Job id from url parameter",jobId);
 
@@ -45,13 +39,13 @@ exports.postApplication = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "You are already applied for this position !!!",
-        isApplied:true
+        isApplied: true,
       });
     }
     // else {
     // get the resume from req.files
     const resumefile = req.files.resumefile;
-  
+
     if (!resumefile || !req.files) {
       return res.status(403).json({
         success: false,
@@ -136,6 +130,13 @@ exports.postApplication = async (req, res) => {
       },
       JobId: jobId,
     });
+
+    // send the notify email to the user that you have successfully applied for the jobs
+    mailSender(
+      email,
+      `${jobInfo?.title}| Application Successfully SUBMITTED`,
+      successFullyApply(`${jobInfo?.title}`, firstName)
+    );
 
     // finally return the response
     return res.status(200).json({
