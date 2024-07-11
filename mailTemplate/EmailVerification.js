@@ -72,9 +72,6 @@ const emailVerification = (otp) => {
       
       <body>
           <div class="container">
-          <a href="https://apply-seeker-project.vercel.app"><img class="logo" src="https://res.cloudinary.com/dhfomx8lk/image/upload/v1709388401/StudyAddaMaterial/wlvv2umy1zsakvbuk3e1.png"
-          alt="apply-seeker"></a>
-              <h1 class="study">Apply Seeker </h1>
               <div class="message">OTP Verification Email</div>
               <div class="body">
                   <p>Dear User,</p>
