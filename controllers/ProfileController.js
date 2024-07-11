@@ -124,7 +124,6 @@ exports.updateProfileData = async (req, res) => {
 
 // delete user profile
 exports.deleteAccount = async (req, res) => {
-  console.log("Inside delete con");
   try {
     const userId = req.user.id;
     if (!userId) {
